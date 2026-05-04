@@ -907,7 +907,7 @@ function DreamTeamView({ players }: { players: Player[] }) {
     name: p.name,
     photoId: p.code,
     club: p.club,
-    badge: p.elementId === mostCaptainedId ? "🎖" : undefined,
+    badge: p.elementId === mostCaptainedId ? String(p.captained) : undefined,
     badgeGold: p.elementId === mostCaptainedId,
   });
 
