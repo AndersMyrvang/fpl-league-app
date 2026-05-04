@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "@/lib/theme";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const THEMES = [
   {
@@ -25,13 +25,21 @@ const THEMES = [
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
 
   return (
     <section style={{ maxWidth: 480, margin: "0 auto", padding: "0 20px" }}>
       <div style={{ marginBottom: 32 }}>
-        <Link href="/" style={{ color: "var(--accent)", fontSize: 13, fontWeight: 600 }}>
+        <button
+          onClick={() => router.back()}
+          style={{
+            background: "none", border: "none", padding: 0,
+            color: "var(--accent)", fontSize: 13, fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
           ← Back
-        </Link>
+        </button>
         <h1 style={{
           fontFamily: "var(--font-head)",
           fontWeight: 900, fontSize: "2rem",

@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${barlowCondensed.variable} ${barlow.variable}`} data-theme="slate">
+    <html lang="en" className={`${barlowCondensed.variable} ${barlow.variable}`} data-theme="slate" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: `
           try {
