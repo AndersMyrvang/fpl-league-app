@@ -130,7 +130,7 @@ export default function StandingsPage() {
                   gap: 14,
                   padding: "14px 20px",
                   borderBottom: i < standings.length - 1 ? "1px solid var(--border)" : "none",
-                  background: i === 0 ? "rgba(56,189,248,0.04)" : "transparent",
+                  background: i === 0 ? "var(--accent-dim)" : "transparent",
                 }}
               >
                 <span style={{
@@ -162,9 +162,9 @@ export default function StandingsPage() {
                       <span style={{
                         fontSize: 10, fontWeight: 700,
                         padding: "2px 7px", borderRadius: 99,
-                        background: "rgba(251,191,36,0.15)",
-                        border: "1px solid rgba(251,191,36,0.35)",
-                        color: "#fbbf24",
+                        background: "var(--accent-dim)",
+                        border: "1px solid var(--accent-border)",
+                        color: "var(--gold)",
                         letterSpacing: "0.04em",
                       }}>
                         GW win

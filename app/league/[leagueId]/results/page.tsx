@@ -30,20 +30,20 @@ function medalFor(rank: number): string {
 
 const CARD_CFG = {
   winner: {
-    border: "2px solid #22c55e",
-    background: "linear-gradient(160deg, rgba(34,197,94,0.2) 0%, rgba(7,12,24,0.95) 80%)",
-    scoreColor: "#22c55e",
+    border: "2px solid var(--green)",
+    background: "var(--green-dim)",
+    scoreColor: "var(--green)",
     nameColor: "#ffffff",
     label: "VINNER ✓",
-    labelColor: "#22c55e",
+    labelColor: "var(--green)",
   },
   loser: {
-    border: "2px solid #f43f5e",
-    background: "linear-gradient(160deg, rgba(244,63,94,0.18) 0%, rgba(7,12,24,0.95) 80%)",
-    scoreColor: "#fb7185",
-    nameColor: "#fecdd3",
+    border: "2px solid var(--red)",
+    background: "var(--red-dim)",
+    scoreColor: "var(--red)",
+    nameColor: "var(--text)",
     label: "TAPER ✗",
-    labelColor: "#f43f5e",
+    labelColor: "var(--red)",
   },
   neutral: {
     border: "1px solid var(--border)",
@@ -123,7 +123,7 @@ function GWCard({ gw, players: ranked }: GWResult) {
             marginLeft: "auto",
             display: "inline-flex", alignItems: "center",
             padding: "3px 10px", borderRadius: 99, fontSize: 12, fontWeight: 700,
-            color: "#22c55e", background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.3)",
+            color: "var(--green)", background: "var(--green-dim)", border: "1px solid var(--green-border)",
           }}>
             Høyest: {topScore}
           </span>

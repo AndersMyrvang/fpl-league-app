@@ -267,10 +267,10 @@ export default function CreatePage() {
                 marginTop: 16,
                 padding: "12px 16px",
                 borderRadius: 8,
-                background: "rgba(251,191,36,0.08)",
-                border: "1px solid rgba(251,191,36,0.3)",
+                background: "var(--accent-dim)",
+                border: "1px solid var(--accent-border)",
                 fontSize: 13,
-                color: "#fbbf24",
+                color: "var(--gold)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -279,7 +279,7 @@ export default function CreatePage() {
                 <span>This FPL league is already registered.</span>
                 <Link
                   href={`/league/${existingLeagueId}`}
-                  style={{ color: "#fbbf24", fontWeight: 700, whiteSpace: "nowrap" }}
+                  style={{ color: "var(--gold)", fontWeight: 700, whiteSpace: "nowrap" }}
                 >
                   View it →
                 </Link>
@@ -299,8 +299,8 @@ export default function CreatePage() {
               padding: "14px",
               borderRadius: 10,
               border: "none",
-              background: "var(--accent)",
-              color: "#fff",
+              background: "var(--btn-bg)",
+              color: "var(--btn-text)",
               fontWeight: 700,
               fontSize: 15,
               cursor: "pointer",

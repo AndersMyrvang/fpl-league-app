@@ -29,8 +29,16 @@ export default function HomePage() {
         gap: 40,
         padding: "80px 20px",
         textAlign: "center",
+        position: "relative",
       }}
     >
+      <div style={{ position: "absolute", top: 20, right: 20 }}>
+        <Link href="/settings" style={{
+          fontSize: 11, fontWeight: 700, color: "var(--muted)",
+          padding: "5px 10px", borderRadius: 8,
+          border: "1px solid var(--border)", background: "rgba(255,255,255,0.04)",
+        }}>⚙ Theme</Link>
+      </div>
       <div>
         <h1
           style={{

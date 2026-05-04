@@ -25,4 +25,5 @@ yarn.lock
 
 # claude code
 .claude/
+/handoff
 

@@ -473,7 +473,7 @@ function SeasonChart({
         {cursor && !dragging && tooltipRows.length > 0 && (
           <g style={{ pointerEvents: "none" }}>
             <rect x={tipX} y={SVG_MT} width={TIP_W} height={TIP_H}
-              rx="6" fill="#080f1e" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+              rx="6" fill="var(--background-deep)" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
             <text x={tipX + 10} y={SVG_MT + 14}
               fontSize="10" fontWeight="700" letterSpacing="0.07em" fill="rgba(255,255,255,0.45)">
               GW {cursor.gw}

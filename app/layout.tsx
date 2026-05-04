@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, DM_Sans } from "next/font/google";
+import { Barlow_Condensed, Barlow } from "next/font/google";
+import { ThemeProvider } from "@/lib/theme";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
   variable: "--font-head",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700", "800", "900"],
 });
-const dmSans = DM_Sans({
+
+const barlow = Barlow({
   subsets: ["latin"],
   variable: "--font-body",
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -24,9 +26,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${barlowCondensed.variable} ${barlow.variable}`} data-theme="slate">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            var t = localStorage.getItem('fpl-theme');
+            if (t && ['slate','blue','green'].includes(t)) {
+              document.documentElement.setAttribute('data-theme', t);
+            }
+          } catch(e) {}
+        ` }} />
+      </head>
       <body>
-        <main className="container">{children}</main>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
