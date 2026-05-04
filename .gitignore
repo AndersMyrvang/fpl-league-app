@@ -1,0 +1,28 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next
+/out
+/.turbo
+
+# env
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# misc
+.DS_Store
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+/scripts
+
+# typescript
+*.tsbuildinfo
+
+# claude code
+.claude/
+
