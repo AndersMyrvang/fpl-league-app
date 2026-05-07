@@ -127,28 +127,58 @@ function SeasonChart({
       setVp(next);
     };
 
+    const scrubToX = (clientX: number) => {
+      const { x } = toSvgPos(clientX, 0);
+      const c = vpRef.current ?? defVpRef.current;
+      const gws = allGwsRef.current;
+      const visible = gws.filter((gw) => gw >= c.x0 - 0.5 && gw <= c.x1 + 0.5);
+      if (!visible.length) return;
+      const xOfGw = (gw: number) => SVG_ML + ((gw - c.x0) / (c.x1 - c.x0)) * SVG_CW;
+      const nearest = visible.reduce((best, gw) =>
+        Math.abs(xOfGw(gw) - x) < Math.abs(xOfGw(best) - x) ? gw : best
+      );
+      if (nearest !== cursorRef.current?.gw) {
+        const next = { gw: nearest, svgX: xOfGw(nearest) };
+        cursorRef.current = next;
+        setCursor(next);
+        // Light haptic tick on each new GW (Capacitor native only, silently ignored in browser)
+        import("@capacitor/haptics").then(({ Haptics, ImpactStyle }) => {
+          Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+        }).catch(() => {});
+      }
+    };
+
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
-        dragRef.current = null;
-        const { x, y } = toSvgPos(
-          (e.touches[0].clientX + e.touches[1].clientX) / 2,
-          (e.touches[0].clientY + e.touches[1].clientY) / 2
-        );
+        const mid = {
+          x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+          y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
+        };
+        const svgMid = toSvgPos(mid.x, mid.y);
         pinchRef.current = {
           dist: Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
           ),
-          sx: x, sy: y,
+          sx: svgMid.x, sy: svgMid.y,
         };
+        // Track midpoint for two-finger panning
+        dragRef.current = { cx: mid.x, cy: mid.y, vp: vpRef.current ?? defVpRef.current };
+        setCursor(null);
       } else if (e.touches.length === 1) {
+        // Show cursor immediately at touch point
         dragRef.current = { cx: e.touches[0].clientX, cy: e.touches[0].clientY, vp: vpRef.current ?? defVpRef.current };
+        scrubToX(e.touches[0].clientX);
       }
     };
 
     const onTouchMove = (e: TouchEvent) => {
       e.preventDefault();
       if (e.touches.length === 2 && pinchRef.current) {
+        const mid = {
+          x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+          y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
+        };
         const newDist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
@@ -159,64 +189,39 @@ function SeasonChart({
         const { sx, sy } = pinchRef.current;
         const mx = c.x0 + ((sx - SVG_ML) / SVG_CW) * (c.x1 - c.x0);
         const my = c.y0 + ((SVG_MT + SVG_CH - sy) / SVG_CH) * (c.y1 - c.y0);
-        const next: Vp = {
+        let next: Vp = {
           x0: mx + (c.x0 - mx) * zf,
           x1: mx + (c.x1 - mx) * zf,
           y0: my + (c.y0 - my) * zf,
           y1: my + (c.y1 - my) * zf,
         };
+        // Also pan based on two-finger midpoint movement
+        if (dragRef.current) {
+          const r = el.getBoundingClientRect();
+          const dSvgX = ((mid.x - dragRef.current.cx) / r.width) * SVG_W;
+          const dSvgY = ((mid.y - dragRef.current.cy) / r.height) * SVG_H;
+          next = {
+            x0: next.x0 - (dSvgX / SVG_CW) * (next.x1 - next.x0),
+            x1: next.x1 - (dSvgX / SVG_CW) * (next.x1 - next.x0),
+            y0: next.y0 + (dSvgY / SVG_CH) * (next.y1 - next.y0),
+            y1: next.y1 + (dSvgY / SVG_CH) * (next.y1 - next.y0),
+          };
+          dragRef.current.cx = mid.x;
+          dragRef.current.cy = mid.y;
+        }
         if (next.x1 - next.x0 >= 0.4 && next.y1 - next.y0 >= 10) {
           vpRef.current = next;
           setVp(next);
         }
-      } else if (e.touches.length === 1 && dragRef.current) {
-        const { cx, cy, vp: dv } = dragRef.current;
-        const r = el.getBoundingClientRect();
-        const dSvgX = ((e.touches[0].clientX - cx) / r.width) * SVG_W;
-        const dSvgY = ((e.touches[0].clientY - cy) / r.height) * SVG_H;
-        const next: Vp = {
-          x0: dv.x0 - (dSvgX / SVG_CW) * (dv.x1 - dv.x0),
-          x1: dv.x1 - (dSvgX / SVG_CW) * (dv.x1 - dv.x0),
-          y0: dv.y0 + (dSvgY / SVG_CH) * (dv.y1 - dv.y0),
-          y1: dv.y1 + (dSvgY / SVG_CH) * (dv.y1 - dv.y0),
-        };
-        vpRef.current = next;
-        setVp(next);
+      } else if (e.touches.length === 1 && !pinchRef.current) {
+        // Real-time cursor scrub — follows finger across GWs
+        scrubToX(e.touches[0].clientX);
       }
     };
 
     const onTouchEnd = (e: TouchEvent) => {
-      if (
-        e.changedTouches.length === 1 &&
-        dragRef.current !== null &&
-        pinchRef.current === null
-      ) {
-        const dx = e.changedTouches[0].clientX - dragRef.current.cx;
-        const dy = e.changedTouches[0].clientY - dragRef.current.cy;
-        if (Math.hypot(dx, dy) < 8) {
-          const r = el.getBoundingClientRect();
-          const sx = ((e.changedTouches[0].clientX - r.left) / r.width) * SVG_W;
-          const c = vpRef.current ?? defVpRef.current;
-          const gws = allGwsRef.current;
-          const visible = gws.filter((gw) => gw >= c.x0 - 0.5 && gw <= c.x1 + 0.5);
-          if (visible.length > 0) {
-            const xOfGw = (gw: number) => SVG_ML + ((gw - c.x0) / (c.x1 - c.x0)) * SVG_CW;
-            const nearest = visible.reduce((best, gw) =>
-              Math.abs(xOfGw(gw) - sx) < Math.abs(xOfGw(best) - sx) ? gw : best
-            );
-            if (cursorRef.current?.gw === nearest) {
-              setCursor(null);
-            } else {
-              setCursor({ gw: nearest, svgX: xOfGw(nearest) });
-            }
-          }
-          dragRef.current = null;
-          pinchRef.current = null;
-          return;
-        }
-      }
-      dragRef.current = null;
-      pinchRef.current = null;
+      if (e.touches.length < 2) pinchRef.current = null;
+      if (e.touches.length === 0) dragRef.current = null;
     };
 
     el.addEventListener("wheel", onWheel, { passive: false });
@@ -339,7 +344,7 @@ function SeasonChart({
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexShrink: 0 }}>
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.22)", userSelect: "none" }}>
-          ↕↔ Scroll/pinch for å zoome · Dra for å panorere
+          Dra for å se GW-poeng · Knip for å zoome
         </span>
         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
           {isZoomed && (
