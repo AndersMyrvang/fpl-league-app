@@ -49,7 +49,7 @@ export default function CreatePage() {
     setPreviewError(null);
     setExistingLeagueId(null);
     try {
-      const res = await fetch(`/api/fpl/league-preview/${id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL ?? ''}/api/fpl/league-preview/${id}`);
       if (!res.ok) {
         setPreviewError("FPL league not found. Check the league ID and try again.");
         return;
@@ -72,7 +72,7 @@ export default function CreatePage() {
     setSubmitError(null);
     setExistingLeagueId(null);
     try {
-      const res = await fetch("/api/league/create", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL ?? ''}/api/league/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

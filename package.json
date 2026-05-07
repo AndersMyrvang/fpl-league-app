@@ -9,9 +9,16 @@
     "lint": "next lint",
     "generate:players": "ts-node scripts/generatePlayerPool.ts",
     "gw": "tsx scripts/processGameweek.ts"
-
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.2",
+    "@capacitor/cli": "^8.3.2",
+    "@capacitor/core": "^8.3.2",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.3.2",
+    "@capacitor/network": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.2",
     "firebase": "^12.6.0",
     "firebase-admin": "^13.6.0",
     "next": "^16.1.3",

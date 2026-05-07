@@ -629,7 +629,7 @@ function TransfersView({ players }: { players: Player[] }) {
           const chunk = await Promise.all(
             uniqueGws.slice(i, i + CHUNK).map(async (gw) => {
               try {
-                const res = await fetch(`/api/fpl/gw-live?gw=${gw}`, { cache: "no-store" });
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL ?? ''}/api/fpl/gw-live?gw=${gw}`, { cache: "no-store" });
                 return [gw, res.ok ? await res.json() : {}] as [number, Record<number, number>];
               } catch {
                 return [gw, {}] as [number, Record<number, number>];
@@ -864,7 +864,7 @@ function DreamTeamView({ players }: { players: Player[] }) {
       if (withFpl.length === 0) { setLoading(false); return; }
       const teamIds = withFpl.map((p) => p.fplTeamId).join(",");
       try {
-        const res = await fetch(`/api/fpl/league/stats?teamIds=${teamIds}`, { cache: "no-store" });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL ?? ''}/api/fpl/league/stats?teamIds=${teamIds}`, { cache: "no-store" });
         if (res.ok) setStats(await res.json());
       } catch {
         // silently ignore

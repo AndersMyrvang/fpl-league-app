@@ -27,3 +27,12 @@ yarn.lock
 .claude/
 /handoff
 
+# Capacitor — Android
+/android/.gradle
+/android/app/build
+/android/local.properties
+
+# Capacitor — iOS (for when you run: npx cap add ios)
+/ios/Pods
+/ios/App/Pods
+

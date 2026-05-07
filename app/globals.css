@@ -12,6 +12,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Mobile / Capacitor — safe-area and body reset ─────────────────────── */
+html, body {
+  /* Prevent bounce-scroll and overscroll effects on iOS WebView */
+  overscroll-behavior: none;
+}
+
+/* Apply safe-area insets so content never hides under notch / home bar */
+.site-header {
+  padding-top: env(safe-area-inset-top);
+}
+
+.site-footer {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* ── Theme: Slate + Amber (default) ──────────────────────────────────────── */
 :root,
 [data-theme="slate"] {
