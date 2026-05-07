@@ -67,9 +67,11 @@ export type ManagerGWEntry = { event: number; points: number; total_points: numb
  * Fetches a manager's full GW history via the server-side proxy route.
  * Safe to call from client components — avoids CORS issues.
  */
+const apiBase = (): string => process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
+
 export async function fetchManagerHistory(teamId: number): Promise<ManagerGWEntry[]> {
   try {
-    const res = await fetch(`/api/fpl/manager/${teamId}`, { cache: "no-store" });
+    const res = await fetch(`${apiBase()}/api/fpl/manager/${teamId}`, { cache: "no-store" });
     if (!res.ok) return [];
     const data = await res.json();
     return (data.current as ManagerGWEntry[]) ?? [];
@@ -111,7 +113,7 @@ export type TransferItem = {
 
 export async function fetchManagerTransfers(teamId: number): Promise<TransferItem[]> {
   try {
-    const res = await fetch(`/api/fpl/manager/${teamId}/transfers`, { cache: "no-store" });
+    const res = await fetch(`${apiBase()}/api/fpl/manager/${teamId}/transfers`, { cache: "no-store" });
     if (!res.ok) return [];
     return res.json();
   } catch {
